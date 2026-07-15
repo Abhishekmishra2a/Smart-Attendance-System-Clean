@@ -1,0 +1,11 @@
+node_modules/
+.env
+backend/.env
+python-face-api/.env
+backend/node_modules/
+frontend/node_modules/
+python-face-api/venv/
+__pycache__/
+*.pyc
+dist/
+build/

@@ -1,0 +1,311 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  background: #070b18;
+  color: white;
+}
+
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(circle at top left, #00d4ff55, transparent 35%),
+    radial-gradient(circle at bottom right, #7c3aed55, transparent 35%),
+    #070b18;
+}
+
+.login-card {
+  width: 900px;
+  min-height: 480px;
+  display: flex;
+  border-radius: 24px;
+  overflow: hidden;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(0, 212, 255, 0.5);
+  box-shadow: 0 0 40px rgba(0, 212, 255, 0.35);
+}
+
+.login-left {
+  width: 50%;
+  padding: 60px 45px;
+  background: linear-gradient(135deg, #00d4ff, #2563eb);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.login-left h1 {
+  font-size: 52px;
+  margin-bottom: 20px;
+}
+
+.login-left p {
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 18px;
+}
+
+.login-left span {
+  font-size: 16px;
+  opacity: 0.9;
+}
+
+.login-right {
+  width: 50%;
+  padding: 60px 45px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.login-right h2 {
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 32px;
+}
+
+.login-right input {
+  width: 100%;
+  padding: 14px;
+  margin-bottom: 18px;
+  border-radius: 10px;
+  border: 1px solid #00d4ff;
+  background: transparent;
+  color: white;
+  outline: none;
+}
+
+.login-right input::placeholder {
+  color: #94a3b8;
+}
+
+.login-right button {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 10px;
+  background: #00d4ff;
+  color: #020617;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.login-right button:hover {
+  background: #38bdf8;
+}
+
+.login-right small {
+  margin-top: 18px;
+  text-align: center;
+  color: #94a3b8;
+}
+
+.dashboard-page {
+  min-height: 100vh;
+  padding: 25px;
+  background:
+    radial-gradient(circle at top left, #00d4ff55, transparent 35%),
+    radial-gradient(circle at bottom right, #7c3aed55, transparent 35%),
+    #070b18;
+  color: white;
+}
+
+.dashboard-navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(0, 212, 255, 0.4);
+  box-shadow: 0 0 20px rgba(0, 212, 255, 0.25);
+  padding: 18px 30px;
+  border-radius: 18px;
+}
+
+.dashboard-navbar h2 {
+  color: #00d4ff;
+}
+
+.dashboard-navbar button,
+.dashboard-actions button,
+.table-box button {
+  padding: 10px 18px;
+  border: none;
+  border-radius: 8px;
+  background: #00d4ff;
+  color: #020617;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.dashboard-header {
+  text-align: center;
+  margin: 35px 0;
+}
+
+.dashboard-header h1 {
+  font-size: 42px;
+  color: white;
+}
+
+.dashboard-header p {
+  color: #94a3b8;
+  margin-top: 10px;
+}
+
+.stats-container {
+  display: flex;
+  gap: 25px;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+.stat-card {
+  width: 250px;
+  padding: 25px;
+  text-align: center;
+  border-radius: 18px;
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(0, 212, 255, 0.4);
+  box-shadow: 0 0 20px rgba(0, 212, 255, 0.25);
+}
+
+.stat-card h3 {
+  color: #94a3b8;
+  margin-bottom: 12px;
+}
+
+.stat-card p {
+  font-size: 36px;
+  font-weight: bold;
+  color: #00d4ff;
+}
+
+.dashboard-actions {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.table-box {
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(0, 212, 255, 0.4);
+  box-shadow: 0 0 25px rgba(0, 212, 255, 0.25);
+  border-radius: 18px;
+  padding: 25px;
+}
+
+.table-box h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #00d4ff;
+}
+
+.table-box table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table-box th,
+.table-box td {
+  padding: 14px;
+  text-align: center;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.3);
+}
+
+.table-box th {
+  color: #00d4ff;
+}
+
+.table-box td {
+  color: white;
+}
+
+.table-box tr:hover {
+  background: rgba(0, 212, 255, 0.08);
+}
+/* ================= Register Student ================= */
+
+.register-container{
+  max-width:1100px;
+  margin:40px auto;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:30px;
+}
+
+.register-card,
+.camera-card{
+  background:rgba(15,23,42,.9);
+  border:1px solid rgba(0,212,255,.4);
+  box-shadow:0 0 25px rgba(0,212,255,.25);
+  border-radius:20px;
+  padding:30px;
+}
+
+.register-card h2,
+.camera-card h2{
+  text-align:center;
+  color:#00d4ff;
+  margin-bottom:25px;
+}
+
+.register-card input{
+  width:100%;
+  padding:14px;
+  margin-bottom:18px;
+  border-radius:10px;
+  border:1px solid #00d4ff;
+  background:transparent;
+  color:white;
+  outline:none;
+}
+
+.register-card input::placeholder{
+  color:#94a3b8;
+}
+
+.register-card button,
+.camera-card button{
+  width:100%;
+  padding:14px;
+  margin-top:10px;
+  border:none;
+  border-radius:10px;
+  background:#00d4ff;
+  color:#020617;
+  font-weight:bold;
+  cursor:pointer;
+  transition:.3s;
+}
+
+.register-card button:hover,
+.camera-card button:hover{
+  background:#38bdf8;
+  transform:translateY(-2px);
+}
+
+.preview-image{
+  width:100%;
+  max-width:280px;
+  margin-top:20px;
+  border-radius:15px;
+  border:2px solid #00d4ff;
+}
+
+.camera-card{
+  text-align:center;
+}
+
+@media(max-width:900px){
+
+.register-container{
+grid-template-columns:1fr;
+}
+
+}
