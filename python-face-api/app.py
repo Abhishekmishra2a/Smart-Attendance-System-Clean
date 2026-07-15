@@ -15,7 +15,10 @@ app = Flask(__name__)
 CORS(app)
 
 MONGO_URI = os.getenv("MONGO_URI")
-NODE_API = os.getenv("NODE_API", "http://localhost:5000")
+NODE_API = os.getenv(
+    "NODE_API",
+    "https://smart-attendance-backend-te37.onrender.com"
+)
 
 client = MongoClient(MONGO_URI)
 db = client["attendance_system"]
@@ -182,4 +185,5 @@ def recognize_face():
 
 
 if __name__ == "__main__":
-    app.run(port=8000, debug=True)
+    port = int(os.environ.get("PORT", 8000))
+    app.run(host="0.0.0.0", port=port, debug=False)

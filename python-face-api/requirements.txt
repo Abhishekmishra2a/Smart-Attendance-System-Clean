@@ -1,6 +1,9 @@
 Flask
 Flask-Cors
-opencv-python
+opencv-python-headless
 numpy
 pymongo
 python-dotenv
+deepface
+tf-keras
+gunicorn
