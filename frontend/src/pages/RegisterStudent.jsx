@@ -62,7 +62,7 @@ function RegisterStudent() {
     try {
       setLoading(true);
 
-      const res = await axios.post("http://localhost:5000/api/students/add", {
+      const res = await axios.post("https://smart-attendance-backend-te37.onrender.com/api/students/add", {
         ...student,
         image,
       });

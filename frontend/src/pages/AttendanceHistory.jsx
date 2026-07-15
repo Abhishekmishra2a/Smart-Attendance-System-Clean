@@ -16,7 +16,7 @@ function AttendanceHistory() {
 
   const fetchHistory = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/attendance/history");
+      const res = await axios.get("https://smart-attendance-backend-te37.onrender.com/api/attendance/history");
       setHistory(res.data.history);
     } catch (error) {
       alert("Error fetching history");

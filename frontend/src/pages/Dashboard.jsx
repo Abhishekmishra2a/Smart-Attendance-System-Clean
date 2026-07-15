@@ -34,7 +34,7 @@ function Dashboard() {
 
   const fetchStudents = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/students");
+      const res = await axios.get("https://smart-attendance-backend-te37.onrender.com/api/students");
       setTotalStudents(res.data.count);
       setStudents(res.data.students);
     } catch (error) {
@@ -44,7 +44,7 @@ function Dashboard() {
 
   const fetchAttendanceCount = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/attendance/count");
+      const res = await axios.get("https://smart-attendance-backend-te37.onrender.com/api/attendance/count");
       setPresentToday(res.data.count);
     } catch (error) {
       console.log(error);
@@ -53,7 +53,7 @@ function Dashboard() {
 
   const fetchTodayAttendance = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/attendance/today");
+      const res = await axios.get("https://smart-attendance-backend-te37.onrender.com/api/attendance/today");
       const ids = res.data.presentStudentIds.map((id) => id.toString());
       setPresentStudentIds(ids);
     } catch (error) {
@@ -63,7 +63,7 @@ function Dashboard() {
 
   const markPresent = async (studentId) => {
     try {
-      const res = await axios.post("http://localhost:5000/api/attendance/mark", {
+      const res = await axios.post("hhttps://smart-attendance-backend-te37.onrender.com/api/attendance/mark", {
         studentId,
       });
 
