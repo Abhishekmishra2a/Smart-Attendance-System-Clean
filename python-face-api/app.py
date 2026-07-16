@@ -88,7 +88,7 @@ def recognize_face():
             DeepFace.extract_faces(
                 img_path=live_image_path,
                 detector_backend="opencv",
-                enforce_detection=True
+                enforce_detection=False
             )
         except Exception:
             if live_image_path and os.path.exists(live_image_path):
@@ -126,7 +126,7 @@ def recognize_face():
                     img2_path=saved_image_path,
                     model_name="VGG-Face",
                     detector_backend="opencv",
-                    enforce_detection=True
+                    enforce_detection=False
                 )
 
                 verified = result.get("verified", False)
