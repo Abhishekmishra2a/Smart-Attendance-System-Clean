@@ -42,7 +42,7 @@ function FaceScan() {
 
       setCapturedImage(imageSrc);
 
-      const res = await axios.post("http://localhost:8000/recognize", {
+      const res = await axios.post("https://smart-attendance-python.onrender.com/recognize", {
         image: imageSrc,
       });
 
