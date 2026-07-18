@@ -7,6 +7,7 @@ import os
 import base64
 import tempfile
 import urllib.request
+import urllib.error
 import json
 
 load_dotenv()
@@ -20,28 +21,46 @@ NODE_API = os.getenv(
     "https://smart-attendance-backend-te37.onrender.com"
 )
 
+if not MONGO_URI:
+    raise ValueError("MONGO_URI environment variable is missing")
+
 client = MongoClient(MONGO_URI)
 db = client["attendance_system"]
 students_collection = db["students"]
 
 
 def save_base64_image(base64_image):
+    if not base64_image:
+        raise ValueError("Empty image received")
+
     if "," in base64_image:
-        base64_image = base64_image.split(",")[1]
+        base64_image = base64_image.split(",", 1)[1]
 
     image_data = base64.b64decode(base64_image)
-    temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".jpg")
+
+    temp_file = tempfile.NamedTemporaryFile(
+        delete=False,
+        suffix=".jpg"
+    )
     temp_file.write(image_data)
     temp_file.close()
+
     return temp_file.name
+
+
+def delete_temp_file(file_path):
+    if file_path and os.path.exists(file_path):
+        os.remove(file_path)
 
 
 def mark_attendance(student_id):
     url = f"{NODE_API}/api/attendance/mark"
 
-    data = json.dumps({"studentId": str(student_id)}).encode("utf-8")
+    data = json.dumps({
+        "studentId": str(student_id)
+    }).encode("utf-8")
 
-    req = urllib.request.Request(
+    request_object = urllib.request.Request(
         url,
         data=data,
         headers={"Content-Type": "application/json"},
@@ -49,23 +68,42 @@ def mark_attendance(student_id):
     )
 
     try:
-        with urllib.request.urlopen(req) as response:
+        with urllib.request.urlopen(
+            request_object,
+            timeout=30
+        ) as response:
             return json.loads(response.read().decode("utf-8"))
+
+    except urllib.error.HTTPError as error:
+        error_body = error.read().decode("utf-8")
+
+        return {
+            "success": False,
+            "message": "Node API returned an error",
+            "status": error.code,
+            "error": error_body
+        }
+
     except Exception as error:
         return {
-            "message": "Attendance already marked for today or Node API error",
+            "success": False,
+            "message": "Unable to connect to Node API",
             "error": str(error)
         }
 
 
 @app.route("/", methods=["GET"])
 def home():
-    return jsonify({"message": "Python Face API Running 🚀"})
+    return jsonify({
+        "message": "Python Face API Running 🚀"
+    })
 
 
 @app.route("/test", methods=["GET"])
 def test():
-    return jsonify({"message": "DeepFace API test route working ✅"})
+    return jsonify({
+        "message": "DeepFace API test route working ✅"
+    })
 
 
 @app.route("/recognize", methods=["POST"])
@@ -73,9 +111,9 @@ def recognize_face():
     live_image_path = None
 
     try:
-        data = request.get_json()
+        data = request.get_json(silent=True)
 
-        if not data or "image" not in data:
+        if not data or not data.get("image"):
             return jsonify({
                 "success": False,
                 "message": "Image is required"
@@ -83,37 +121,42 @@ def recognize_face():
 
         live_image_path = save_base64_image(data["image"])
 
-        # First check: live camera image me face hai ya nahi
+        # Check whether the live image contains a detectable face
         try:
-            DeepFace.extract_faces(
+            detected_faces = DeepFace.extract_faces(
                 img_path=live_image_path,
                 detector_backend="opencv",
-                enforce_detection=False
+                enforce_detection=True,
+                align=True
             )
-        except Exception:
-            if live_image_path and os.path.exists(live_image_path):
-                os.remove(live_image_path)
+
+            if not detected_faces:
+                raise ValueError("No face found in captured image")
+
+        except Exception as error:
+            print("Face detection error:", str(error))
 
             return jsonify({
                 "success": False,
-                "message": "No face detected. Please stand in front of camera."
-            }), 404
+                "message": "No face detected. Look directly at the camera in good lighting.",
+                "error": str(error)
+            }), 422
 
         students = list(students_collection.find({
-            "image": {"$exists": True, "$ne": ""}
+            "image": {
+                "$exists": True,
+                "$nin": ["", None]
+            }
         }))
 
-        if len(students) == 0:
-            if live_image_path and os.path.exists(live_image_path):
-                os.remove(live_image_path)
-
+        if not students:
             return jsonify({
                 "success": False,
                 "message": "No registered student images found"
             }), 404
 
         best_match = None
-        best_distance = 999
+        best_distance = float("inf")
 
         for student in students:
             saved_image_path = None
@@ -126,56 +169,64 @@ def recognize_face():
                     img2_path=saved_image_path,
                     model_name="VGG-Face",
                     detector_backend="opencv",
-                    enforce_detection=False
+                    distance_metric="cosine",
+                    enforce_detection=False,
+                    align=True
                 )
 
                 verified = result.get("verified", False)
-                distance = result.get("distance", 999)
+                distance = float(result.get("distance", 999))
 
-                print(student.get("name"), "verified:", verified, "distance:", distance)
+                print(
+                    student.get("name"),
+                    "verified:",
+                    verified,
+                    "distance:",
+                    distance,
+                    "threshold:",
+                    result.get("threshold")
+                )
 
                 if verified and distance < best_distance:
                     best_distance = distance
                     best_match = student
 
             except Exception as error:
-                print("Student compare error:", error)
+                print(
+                    "Student compare error for",
+                    student.get("name"),
+                    ":",
+                    str(error)
+                )
 
             finally:
-                if saved_image_path and os.path.exists(saved_image_path):
-                    os.remove(saved_image_path)
+                delete_temp_file(saved_image_path)
 
-        if live_image_path and os.path.exists(live_image_path):
-            os.remove(live_image_path)
-
-        if best_match and best_distance < 0.40:
-            attendance_response = mark_attendance(best_match["_id"])
-
+        if not best_match:
             return jsonify({
-                "success": True,
-                "message": "Attendance marked successfully",
-                "student": {
-                    "_id": str(best_match["_id"]),
-                    "name": best_match.get("name"),
-                    "rollNumber": best_match.get("rollNumber"),
-                    "email": best_match.get("email"),
-                    "department": best_match.get("department")
-                },
-                "distance": best_distance,
-                "attendance": attendance_response
-            })
+                "success": False,
+                "message": "Face not recognized. Register a clear front-facing photo and try again.",
+                "distance": None
+            }), 404
+
+        attendance_response = mark_attendance(best_match["_id"])
 
         return jsonify({
-            "success": False,
-            "message": "Face not recognized. Please try again.",
-            "distance": best_distance
-        }), 404
+            "success": True,
+            "message": "Face recognized",
+            "student": {
+                "_id": str(best_match["_id"]),
+                "name": best_match.get("name"),
+                "rollNumber": best_match.get("rollNumber"),
+                "email": best_match.get("email"),
+                "department": best_match.get("department")
+            },
+            "distance": best_distance,
+            "attendance": attendance_response
+        })
 
     except Exception as error:
-        print("Recognition error:", error)
-
-        if live_image_path and os.path.exists(live_image_path):
-            os.remove(live_image_path)
+        print("Recognition error:", str(error))
 
         return jsonify({
             "success": False,
@@ -183,7 +234,14 @@ def recognize_face():
             "error": str(error)
         }), 500
 
+    finally:
+        delete_temp_file(live_image_path)
+
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))
-    app.run(host="0.0.0.0", port=port, debug=False)
+    app.run(
+        host="0.0.0.0",
+        port=port,
+        debug=False
+    )
