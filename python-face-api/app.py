@@ -1,9 +1,17 @@
+import os
+
+# Render par GPU disable aur memory usage kam
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
+os.environ["OMP_NUM_THREADS"] = "1"
+os.environ["TF_NUM_INTRAOP_THREADS"] = "1"
+os.environ["TF_NUM_INTEROP_THREADS"] = "1"
+
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from deepface import DeepFace
 from pymongo import MongoClient
 from dotenv import load_dotenv
-import os
 import base64
 import tempfile
 import urllib.request
@@ -127,26 +135,6 @@ def recognize_face():
 
         live_image_path = save_base64_image(data["image"])
 
-        # Check whether the live image contains a detectable face
-        try:
-            detected_faces = DeepFace.extract_faces(
-                img_path=live_image_path,
-                detector_backend="skip",
-                enforce_detection=True,
-                align=True
-            )
-
-            if not detected_faces:
-                raise ValueError("No face found in captured image")
-
-        except Exception as error:
-            print("Face detection error:", str(error))
-
-            return jsonify({
-                "success": False,
-                "message": "No face detected. Look directly at the camera in good lighting.",
-                "error": str(error)
-            }), 422
 
         students = list(students_collection.find({
             "image": {
@@ -171,13 +159,14 @@ def recognize_face():
                 saved_image_path = save_base64_image(student["image"])
 
                 result = DeepFace.verify(
-                    img1_path=live_image_path,
-                    img2_path=saved_image_path,
-                    model_name="VGG-Face",
-                    detector_backend="skip",
-                    distance_metric="cosine",
-                    enforce_detection=False,
-                    align=True
+                  img1_path=live_image_path,
+                  img2_path=saved_image_path,
+                  model_name="SFace",
+                  detector_backend="skip",
+                  distance_metric="cosine",
+                  enforce_detection=False,
+                  align=False,
+                  silent=True
                 )
 
                 verified = result.get("verified", False)
