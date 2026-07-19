@@ -85,7 +85,7 @@ function Dashboard() {
       if (!confirmDelete) return;
 
       const res = await axios.delete(
-        `http://localhost:5000/api/students/${studentId}`
+        ``https://smart-attendance-backend-te37.onrender.com/api/students/${studentId}`
       );
 
       alert(res.data.message);
@@ -136,7 +136,7 @@ function Dashboard() {
       }
 
       const res = await axios.put(
-        `http://localhost:5000/api/students/${editingStudent._id}`,
+        `https://smart-attendance-backend-te37.onrender.com/api/students/${editingStudent._id}`,
         editForm
       );
 
