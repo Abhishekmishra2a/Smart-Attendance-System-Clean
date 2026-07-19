@@ -63,7 +63,7 @@ function Dashboard() {
 
   const markPresent = async (studentId) => {
     try {
-      const res = await axios.post("hhttps://smart-attendance-backend-te37.onrender.com/api/attendance/mark", {
+      const res = await axios.post("https://smart-attendance-backend-te37.onrender.com/api/attendance/mark", {
         studentId,
       });
 
