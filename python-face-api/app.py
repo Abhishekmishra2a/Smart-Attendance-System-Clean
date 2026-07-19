@@ -125,7 +125,7 @@ def recognize_face():
         try:
             detected_faces = DeepFace.extract_faces(
                 img_path=live_image_path,
-                detector_backend="opencv",
+                detector_backend="skip",
                 enforce_detection=True,
                 align=True
             )
@@ -168,7 +168,7 @@ def recognize_face():
                     img1_path=live_image_path,
                     img2_path=saved_image_path,
                     model_name="VGG-Face",
-                    detector_backend="opencv",
+                    detector_backend="skip",
                     distance_metric="cosine",
                     enforce_detection=False,
                     align=True
