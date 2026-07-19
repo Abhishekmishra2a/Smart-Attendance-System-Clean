@@ -85,7 +85,7 @@ function Dashboard() {
       if (!confirmDelete) return;
 
       const res = await axios.delete(
-        ``https://smart-attendance-backend-te37.onrender.com/api/students/${studentId}`
+        `https://smart-attendance-backend-te37.onrender.com/api/students/${studentId}`
       );
 
       alert(res.data.message);
