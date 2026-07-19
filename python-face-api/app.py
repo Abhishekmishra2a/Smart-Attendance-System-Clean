@@ -13,7 +13,13 @@ import json
 load_dotenv()
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={
+    r"/*": {
+        "origins": [
+            "https://smart-attendance-system-clean.onrender.com"
+        ]
+    }
+})
 
 MONGO_URI = os.getenv("MONGO_URI")
 NODE_API = os.getenv(
